@@ -12,7 +12,7 @@ import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { notifyOptions } from 'helpers/toastNotifyOptions';
-import { addContact } from 'redux/contactsSlice';
+import { addContact } from 'redux/operations';
 
 const schema = yup.object().shape({
   name: yup
@@ -41,14 +41,16 @@ const initialValues = {
 
 const ContactForm = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
+  const contacts = useSelector(state => state.contacts.items);
 
   const handleSubmit = (values, { resetForm }) => {
-    const isContactExists = contacts?.some(
-      contact =>
+    console.log(values);
+    const isContactExists = contacts?.some(contact => {
+      return (
         contact.name.trim() === values.name.trim() ||
-        contact.number.trim() === values.number.trim()
-    );
+        contact.phone.trim() === values.number.trim()
+      );
+    });
 
     if (isContactExists) {
       toast.error(
@@ -56,7 +58,7 @@ const ContactForm = () => {
         notifyOptions
       );
     } else {
-      dispatch(addContact(values));
+      dispatch(addContact({ name: values.name, phone: values.number }));
       resetForm();
     }
   };

@@ -8,14 +8,20 @@ import {
   NumberSpan,
 } from './ContactsList.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from 'redux/contactsSlice';
+import { deleteContact, fetchContacts } from 'redux/operations';
+import { getContacts, getFilterValue } from 'redux/selectors';
+import { useEffect } from 'react';
 
 const ContactsList = () => {
-  const contacts = useSelector(state => state.contacts);
-  const filterValue = useSelector(state => state.filter);
   const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+  const filterValue = useSelector(getFilterValue);
 
-  const onDeleteContact = id => {
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
+  const handleDeleteContact = id => {
     dispatch(deleteContact(id));
   };
 
@@ -32,14 +38,14 @@ const ContactsList = () => {
   return (
     !!filteredContacts.length && (
       <List>
-        {filteredContacts.map(({ id, name, number }) => (
+        {filteredContacts.map(({ id, name, phone }) => (
           <Item key={id}>
             <ItemWrapper>
-              <NameSpan>{name}:</NameSpan> <NumberSpan>{number}</NumberSpan>
+              <NameSpan>{name}:</NameSpan> <NumberSpan>{phone}</NumberSpan>
             </ItemWrapper>
             <DeleteButton
               type="button"
-              onClick={() => onDeleteContact(id)}
+              onClick={() => handleDeleteContact(id)}
               aria-label="Delete contact"
             >
               <FiUserMinus />
