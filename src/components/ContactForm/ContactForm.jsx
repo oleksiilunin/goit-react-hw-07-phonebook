@@ -44,7 +44,6 @@ const ContactForm = () => {
   const contacts = useSelector(state => state.contacts.items);
 
   const handleSubmit = (values, { resetForm }) => {
-    console.log(values);
     const isContactExists = contacts?.some(contact => {
       return (
         contact.name.trim() === values.name.trim() ||
